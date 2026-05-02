@@ -1211,15 +1211,6 @@ h1, h2, h3, h4, h5, h6 {
   gap: 0.85rem;
 }
 
-.t-card-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  flex-shrink: 0;
-}
-
 .t-card-info {
   display: flex;
   flex-direction: column;
@@ -1388,14 +1379,19 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 1;
 }
 
-/* Optical Scale Adjustments for Perfect Consistency */
-.trust-bar .logo-thales { height: 20px; }
-.trust-bar .logo-entrust { height: 32px; }
-.trust-bar .logo-utimaco { height: 26px; }
-.trust-bar .logo-fortanix { height: 32px; }
-.trust-bar .logo-aws { height: 34px; }
-.trust-bar .logo-azure { height: 32px; }
-.trust-bar .logo-gcp { height: 36px; }
+/* Optical Scale Adjustments for Perfect Consistency
+   Sized for matching optical weight — heavy wordmarks (Thales, NinjaOne)
+   sized down so their stroke density doesn't outweigh lighter logos;
+   GCP sized down further to offset its extreme width. */
+.trust-bar .logo-thales { height: 16px; }
+.trust-bar .logo-entrust { height: 28px; }
+.trust-bar .logo-huntress { height: 28px; filter: brightness(0) invert(1); }
+.trust-bar .logo-ninjaone { height: 22px; filter: brightness(0) invert(1); }
+.trust-bar .logo-checkpoint { height: 28px; filter: brightness(0) invert(1); }
+.trust-bar .logo-tenable { height: 28px; filter: brightness(0) invert(1); }
+.trust-bar .logo-aws { height: 28px; }
+.trust-bar .logo-azure { height: 28px; }
+.trust-bar .logo-gcp { height: 22px; }
 .trust-bar .logo-icon {
   width: 24px;
   height: 24px;
@@ -1456,19 +1452,21 @@ h1, h2, h3, h4, h5, h6 {
   --spotlight-x: 50%;
   --spotlight-y: 50%;
   --spotlight-opacity: 0;
-  --spotlight-color: 220;
-  --spotlight-spread: 200;
-  --spotlight-hue: calc(var(--spotlight-color) + (var(--xp, 0.5) * var(--spotlight-spread)));
+  --spot-rgb: 100, 140, 255;
+  --card-brand-bg: linear-gradient(transparent, transparent);
+  --card-brand-rgb: 255, 255, 255;
   position: relative;
   background-color: rgba(255, 255, 255, 0.02);
-  background-image: radial-gradient(
-    300px 300px at var(--spotlight-x) var(--spotlight-y),
-    hsla(var(--spotlight-hue), 100%, 70%, calc(0.1 * var(--spotlight-opacity))),
-    transparent
-  );
+  background-image:
+    radial-gradient(
+      290px 290px at var(--spotlight-x) var(--spotlight-y),
+      rgba(var(--spot-rgb), calc(0.11 * var(--spotlight-opacity))),
+      transparent
+    ),
+    var(--card-brand-bg);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 2rem 1.75rem;
+  border-radius: 20px;
+  padding: 3.75rem 2rem 2rem;
   display: flex;
   flex-direction: column;
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -1488,8 +1486,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 .pricing-card::before {
   background: radial-gradient(
-    250px 250px at var(--spotlight-x) var(--spotlight-y),
-    hsla(var(--spotlight-hue), 100%, 50%, 0.85),
+    245px 245px at var(--spotlight-x) var(--spotlight-y),
+    rgba(var(--spot-rgb), 0.55),
     transparent 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -1498,12 +1496,12 @@ h1, h2, h3, h4, h5, h6 {
   mask-composite: exclude;
   padding: 2px;
   z-index: 3;
-  filter: brightness(1.5);
+  filter: brightness(1.2);
 }
 .pricing-card::after {
   background: radial-gradient(
-    180px 180px at var(--spotlight-x) var(--spotlight-y),
-    hsla(0, 0%, 100%, 0.6),
+    175px 175px at var(--spotlight-x) var(--spotlight-y),
+    rgba(var(--spot-rgb), 0.35),
     transparent 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -1520,11 +1518,11 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  opacity: calc(var(--spotlight-opacity) * 0.6);
-  filter: blur(25px);
+  opacity: calc(var(--spotlight-opacity) * 0.3);
+  filter: blur(26px);
   background: radial-gradient(
-    300px 300px at var(--spotlight-x) var(--spotlight-y),
-    hsla(var(--spotlight-hue), 100%, 50%, 0.35),
+    290px 290px at var(--spotlight-x) var(--spotlight-y),
+    rgba(var(--spot-rgb), 0.3),
     transparent 100%
   );
   z-index: 0;
@@ -1536,13 +1534,27 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 .pricing-card-featured {
-  background: rgba(255, 255, 255, 0.04);
+  --card-brand-rgb: 160, 180, 255;
+  background-color: rgba(255, 255, 255, 0.045);
   position: relative;
-  border-color: rgba(100, 140, 255, 0.25);
+  border-color: rgba(100, 140, 255, 0.35);
   box-shadow:
-    0 0 30px rgba(80, 120, 255, 0.08),
-    0 0 80px rgba(80, 120, 255, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 0 40px rgba(80, 120, 255, 0.10),
+    0 0 0 1px rgba(100, 140, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+.pricing-card-onetime {
+  --card-brand-rgb: 120, 240, 220;
+}
+.pricing-card-custom {
+  --card-brand-rgb: 230, 210, 160;
+}
+.pricing-card-custom .plan-price {
+  font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+  min-height: calc(clamp(2rem, 3.5vw, 2.5rem) * 1.1);
+  display: flex;
+  align-items: center;
+  word-spacing: 0.08em;
 }
 .pricing-card-featured::after {
   content: '';
@@ -1552,10 +1564,10 @@ h1, h2, h3, h4, h5, h6 {
   padding: 1px;
   background: linear-gradient(
     160deg,
-    rgba(100, 140, 255, 0.4) 0%,
-    rgba(100, 140, 255, 0.08) 30%,
+    rgba(74, 124, 255, 0.4) 0%,
+    rgba(74, 124, 255, 0.08) 30%,
     transparent 60%,
-    rgba(100, 140, 255, 0.12) 100%
+    rgba(74, 124, 255, 0.12) 100%
   );
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -1578,58 +1590,88 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(135deg, rgba(100, 140, 255, 0.2), rgba(100, 140, 255, 0.08));
   border: 1px solid rgba(100, 140, 255, 0.25);
   color: rgba(160, 190, 255, 0.95);
-  padding: 0.25rem 0.7rem;
-  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
   letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 6;
 }
 .plan-name {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 0.75rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2vw, 1.7rem);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+  margin-bottom: 0.65rem;
+  min-height: calc(1.7rem * 1.2 * 2);
+  text-wrap: balance;
 }
 .plan-price {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.5vw, 2.5rem);
   font-weight: 300;
-  margin-bottom: 0.4rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text-primary);
   letter-spacing: -0.03em;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 .plan-price span {
   font-size: 0.85rem;
   color: var(--color-text-tertiary);
   font-weight: 400;
+  white-space: nowrap;
+  letter-spacing: 0;
+  word-spacing: 0.05em;
+  margin-left: 0.35em;
 }
 .plan-desc {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--color-text-secondary);
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+  margin-bottom: 2rem;
+  line-height: 1.55;
+  min-height: calc(0.95rem * 1.55 * 3);
+  text-wrap: pretty;
+}
+.plan-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 0 0 1.5rem 0;
 }
 .plan-features {
   list-style: none;
   padding: 0;
-  margin: 0 0 1.5rem 0;
-  flex-grow: 1;
+  margin: 0;
+  flex-grow: 0;
 }
 .plan-features li {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--color-text-secondary);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.85rem;
   display: flex;
   align-items: flex-start;
   gap: 0.6rem;
 }
+.plan-features li:last-child {
+  margin-bottom: 0;
+}
 .check-icon {
-  width: 14px;
-  height: 14px;
-  color: var(--color-accent);
+  width: 12px;
+  height: 12px;
+  padding: 5px;
+  border-radius: 50%;
+  background: rgba(var(--card-brand-rgb), 0.08);
+  border: 1px solid rgba(var(--card-brand-rgb), 0.18);
+  color: rgba(var(--card-brand-rgb), 1);
+  box-sizing: content-box;
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 1px;
+}
+.check-icon path {
+  stroke-width: 2.5;
 }
 .plan-features--usage {
   gap: 0;
@@ -1658,7 +1700,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 .pricing-btn {
   width: 100%;
-  margin-top: auto;
+  margin-top: 0;
+  margin-bottom: 1.75rem;
 }
 
 /* Enterprise tier CTA — solid anchor, differentiated from hollow siblings */
@@ -4279,10 +4322,13 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(135deg, rgba(200, 170, 100, 0.18), rgba(200, 170, 100, 0.06));
   border: 1px solid rgba(200, 170, 100, 0.3);
   color: rgba(230, 200, 130, 0.95);
-  padding: 0.25rem 0.7rem;
-  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
   letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 6;
 }
 
 .plan-badge-onetime {
@@ -4292,39 +4338,47 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(0, 229, 200, 0.12);
   border: 1px solid rgba(0, 229, 200, 0.25);
   color: var(--color-cta);
-  padding: 0.25rem 0.7rem;
-  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
   letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  z-index: 6;
 }
 
 .plan-price-onetime {
   font-family: var(--font-display);
   font-size: clamp(2rem, 3.5vw, 2.5rem);
   font-weight: 300;
-  margin-bottom: 0.1rem;
+  margin-bottom: 1.5rem;
   color: var(--color-text-primary);
   letter-spacing: -0.03em;
+  line-height: 1.1;
 }
 
 .plan-price-qualifier {
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  display: inline;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.85rem;
   color: var(--color-text-tertiary);
-  letter-spacing: 0.05em;
-  display: block;
-  margin-bottom: 0.75rem;
+  letter-spacing: 0;
+  margin-left: 0.4em;
+  vertical-align: baseline;
+  white-space: nowrap;
 }
 
 .plan-deliverable {
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   background: rgba(0, 229, 200, 0.06);
   border: 1px solid rgba(0, 229, 200, 0.12);
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.85rem;
   color: rgba(255, 255, 255, 0.8);
   line-height: 1.5;
-  margin-bottom: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0;
 }
 
 .plan-small-print {
@@ -4347,5 +4401,208 @@ h1, h2, h3, h4, h5, h6 {
   .plan-small-print-footnote {
     grid-column: 1 / -1;
     grid-row: auto;
+  }
+}
+
+/* =============================================
+   PRICING — BOLDER
+   Heavier hierarchy, committed brand washes per tier,
+   pedestal lift on featured. No gradient text, no
+   glassmorphism, no side-stripes.
+   ============================================= */
+
+/* Slightly more breathing room across all cards */
+.pricing-card {
+  padding: 4.75rem 2.25rem 2.25rem;
+}
+
+/* Per-tier committed wash + 2px top-edge brand glow inside the card */
+.pricing-card-onetime {
+  --card-brand-rgb: 120, 240, 220;
+  --spot-rgb: 0, 229, 200;
+  --card-brand-bg:
+    radial-gradient(ellipse 110% 55% at 50% 0%, rgba(0, 229, 200, 0.07), transparent 60%);
+}
+
+.pricing-card-custom {
+  --card-brand-rgb: 230, 210, 160;
+  --spot-rgb: 220, 180, 100;
+  --card-brand-bg:
+    radial-gradient(ellipse 110% 55% at 50% 0%, rgba(230, 200, 130, 0.06), transparent 60%);
+}
+
+.pricing-card-featured {
+  --card-brand-rgb: 74, 124, 255;
+  --spot-rgb: 74, 124, 255;
+  --card-brand-bg:
+    radial-gradient(ellipse 115% 60% at 50% 0%, rgba(74, 124, 255, 0.22), transparent 62%);
+  background-color: rgba(255, 255, 255, 0.055);
+  border-color: rgba(74, 124, 255, 0.55);
+  padding: 4.5rem 2.4rem 2.4rem;
+  box-shadow:
+    0 0 0 1px rgba(74, 124, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 32px 88px rgba(74, 124, 255, 0.24),
+    0 15px 42px rgba(0, 0, 0, 0.48);
+}
+
+/* Pedestal lift only on desktop where cards sit side-by-side */
+@media (min-width: 769px) {
+  .pricing-card-featured {
+    transform: translateY(-12px);
+  }
+}
+
+.pricing-card-featured:hover {
+  transform: translateY(-17px);
+  border-color: rgba(74, 124, 255, 0.7);
+  box-shadow:
+    0 0 0 1px rgba(74, 124, 255, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 42px 100px rgba(74, 124, 255, 0.32),
+    0 18px 50px rgba(0, 0, 0, 0.55);
+}
+
+/* Typography muscle: heavier weights, dramatic scale jumps */
+.plan-name {
+  font-weight: 700;
+  font-size: clamp(1.4rem, 1.95vw, 1.7rem);
+  letter-spacing: -0.025em;
+  min-height: calc(1.7rem * 1.2 * 2);
+}
+
+.plan-price,
+.plan-price-onetime {
+  font-weight: 500;
+  font-size: clamp(2.5rem, 4.4vw, 3.25rem);
+  letter-spacing: -0.045em;
+  margin-bottom: 1.75rem;
+}
+
+.pricing-card-featured .plan-price {
+  font-size: clamp(3.05rem, 5.6vw, 3.95rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  margin-bottom: 1.2rem;
+}
+
+.pricing-card-featured .plan-price > span {
+  font-size: 1rem;
+}
+
+.plan-price > span,
+.plan-price-qualifier {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  letter-spacing: 0;
+  margin-left: 0.4em;
+}
+
+/* "Quote on request" stays smaller — it's text, not a price.
+   min-height matches the new price scale so the three CTAs share a baseline. */
+.pricing-card-custom .plan-price {
+  font-size: clamp(1.75rem, 2.6vw, 2.1rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--color-text-primary);
+  white-space: normal;
+  min-height: calc(clamp(2.5rem, 4.4vw, 3.25rem) * 1.1);
+}
+
+/* Brighter dividers; featured gets a brand-tinted gradient line */
+.plan-divider {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.pricing-card-featured .plan-divider {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(74, 124, 255, 0.45),
+    transparent
+  );
+}
+
+/* More saturated check-icon brand wells */
+.check-icon {
+  width: 14px;
+  height: 14px;
+  background: rgba(var(--card-brand-rgb), 0.14);
+  border-color: rgba(var(--card-brand-rgb), 0.34);
+}
+
+/* Confident badges — bigger, weightier, real brand commitment */
+.plan-badge,
+.plan-badge-onetime,
+.plan-badge-custom {
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 0.4rem 0.85rem;
+  letter-spacing: 0.1em;
+  top: 1.6rem;
+}
+
+.plan-badge {
+  background: linear-gradient(
+    135deg,
+    var(--color-accent),
+    var(--color-accent-dim)
+  );
+  border-color: rgba(140, 170, 255, 0.6);
+  color: #ffffff;
+  box-shadow:
+    0 6px 18px rgba(74, 124, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.plan-badge-onetime {
+  background: rgba(0, 229, 200, 0.16);
+  border-color: rgba(0, 229, 200, 0.45);
+  color: #5cf2dc;
+  box-shadow: 0 6px 14px rgba(0, 229, 200, 0.12);
+}
+
+.plan-badge-custom {
+  background: linear-gradient(
+    135deg,
+    rgba(220, 180, 100, 0.24),
+    rgba(220, 180, 100, 0.08)
+  );
+  border-color: rgba(230, 200, 130, 0.5);
+  color: rgba(245, 220, 160, 1);
+  box-shadow: 0 6px 14px rgba(180, 140, 60, 0.16);
+}
+
+/* CTA on featured: a touch weightier to anchor the recommended tier */
+.btn-secondary.pricing-btn {
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+/* Cleaner feature-list rhythm — uniform gap regardless of single/multi-line items */
+.plan-features {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+}
+
+.plan-features li {
+  margin-bottom: 0;
+  line-height: 1.5;
+  gap: 0.75rem;
+}
+
+/* Mobile: recenter the card edges and badge positions */
+@media (max-width: 768px) {
+  .pricing-card,
+  .pricing-card-featured {
+    padding: 4rem 1.75rem 2rem;
+  }
+  .plan-badge,
+  .plan-badge-onetime,
+  .plan-badge-custom {
+    top: 1.4rem;
+    left: 1.75rem;
   }
 }

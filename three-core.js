@@ -800,7 +800,7 @@ const __initVaultCore = () => {
         trigger: '.why-titan',
         start: 'top 120%',
         end: 'bottom top',
-        scrub: 1.5
+        scrub: 0.5
       }
     });
 

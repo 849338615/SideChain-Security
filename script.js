@@ -719,16 +719,10 @@
   }
 
 
-  // ─── PRICING SPOTLIGHT — CURSOR-TRACKING GLOW ──────
+  // ─── PRICING SPOTLIGHT — CURSOR-TRACKING BRAND GLOW ──────
   const pricingCards = document.querySelectorAll('.pricing-card');
 
   if (pricingCards.length) {
-    // Track normalized pointer position for hue shift
-    let xp = 0.5;
-    document.addEventListener('pointermove', function (e) {
-      xp = e.clientX / window.innerWidth;
-    }, { passive: true });
-
     pricingCards.forEach(function (card) {
       card.addEventListener('pointerenter', function () {
         card.style.setProperty('--spotlight-opacity', '1');
@@ -740,11 +734,8 @@
 
       card.addEventListener('pointermove', function (e) {
         var rect = card.getBoundingClientRect();
-        var x = e.clientX - rect.left;
-        var y = e.clientY - rect.top;
-        card.style.setProperty('--spotlight-x', x + 'px');
-        card.style.setProperty('--spotlight-y', y + 'px');
-        card.style.setProperty('--xp', xp.toFixed(2));
+        card.style.setProperty('--spotlight-x', (e.clientX - rect.left) + 'px');
+        card.style.setProperty('--spotlight-y', (e.clientY - rect.top) + 'px');
       });
     });
   }
