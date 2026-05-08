@@ -639,34 +639,76 @@
   // ─── SMOOTH SCROLL ──────────────────────────────────
   // Center the target section in the viewport when a nav link is clicked.
   // For sections taller than the viewport, scroll to the top with nav offset.
+  // Destination is recomputed every animation frame so late layout shifts
+  // (web-font swap, lazy-image decode) don't strand the scroll at a stale Y.
+  const computeScrollTarget = (target) => {
+    const navHeight = nav.getBoundingClientRect().height;
+    const sectionRect = target.getBoundingClientRect();
+    const sectionHeight = sectionRect.height;
+    const viewportHeight = window.innerHeight;
+    const availableHeight = viewportHeight - navHeight;
+
+    let y;
+    if (sectionHeight >= availableHeight) {
+      y = window.scrollY + sectionRect.top - navHeight - 20;
+    } else {
+      const offset = (availableHeight - sectionHeight) / 2;
+      y = window.scrollY + sectionRect.top - navHeight - offset;
+    }
+    const maxY = Math.max(0, document.documentElement.scrollHeight - viewportHeight);
+    return Math.min(Math.max(0, y), maxY);
+  };
+
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const smoothScrollToTarget = (target) => {
+    if (prefersReducedMotion) {
+      window.scrollTo(0, computeScrollTarget(target));
+      return;
+    }
+
+    const startY = window.scrollY;
+    const startTime = performance.now();
+    const duration = 700;
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+    let cancelled = false;
+    const cancel = () => { cancelled = true; };
+    window.addEventListener('wheel', cancel, { passive: true, once: true });
+    window.addEventListener('touchmove', cancel, { passive: true, once: true });
+    window.addEventListener('keydown', cancel, { once: true });
+
+    const cleanup = () => {
+      window.removeEventListener('wheel', cancel);
+      window.removeEventListener('touchmove', cancel);
+      window.removeEventListener('keydown', cancel);
+    };
+
+    const step = (now) => {
+      if (cancelled) { cleanup(); return; }
+      const t = Math.min((now - startTime) / duration, 1);
+      const destinationY = computeScrollTarget(target);
+      const y = startY + (destinationY - startY) * easeInOutCubic(t);
+      window.scrollTo(0, y);
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        cleanup();
+      }
+    };
+
+    requestAnimationFrame(step);
+  };
+
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', function (e) {
       const targetId = this.getAttribute('href');
       if (targetId === '#') return;
       const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        // Ensure nav is in fixed/scrolled state before scrolling
-        nav.classList.add('scrolled');
-
-        const navHeight = nav.getBoundingClientRect().height;
-        const sectionRect = target.getBoundingClientRect();
-        const sectionHeight = sectionRect.height;
-        const viewportHeight = window.innerHeight;
-        const availableHeight = viewportHeight - navHeight;
-
-        let scrollToY;
-        if (sectionHeight >= availableHeight) {
-          // Section is taller than available viewport — scroll its top to just below nav
-          scrollToY = window.scrollY + sectionRect.top - navHeight - 20;
-        } else {
-          // Section is shorter — center it vertically in the available space below nav
-          const offset = (availableHeight - sectionHeight) / 2;
-          scrollToY = window.scrollY + sectionRect.top - navHeight - offset;
-        }
-
-        window.scrollTo({ top: Math.max(0, scrollToY), behavior: 'smooth' });
-      }
+      if (!target) return;
+      e.preventDefault();
+      nav.classList.add('scrolled');
+      smoothScrollToTarget(target);
     });
   });
 
