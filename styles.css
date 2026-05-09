@@ -3301,19 +3301,36 @@ h1, h2, h3, h4, h5, h6 {
     font-size: clamp(2rem, 8vw, 3rem);
   }
 
+  /* Hero section nav: 3-column grid (2 rows of 3) instead of flex-wrap.
+     The wrap behavior produced an awkward 4 + 2 layout with a visually
+     unbalanced second row. A grid gives equal tap targets, deliberate
+     rhythm, and reads as a designed control rather than collapsed flex. */
   .hero-nav-bar {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0;
-    padding: 0.4rem 0.6rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.3rem;
+    width: calc(100% - 2 * var(--space-md));
+    max-width: 360px;
+    padding: 0.45rem;
+    box-sizing: border-box;
+  }
+
+  /* Separators belong to the inline desktop pill — irrelevant inside grid
+     cells where each link already has its own bounded area. */
+  .hero-nav-sep {
+    display: none;
   }
 
   .hero-nav-link {
-    font-size: 0.68rem;
-    padding: 0.6rem 0.75rem;
-    min-height: 36px;
+    font-size: 0.66rem;
+    padding: 0.6rem 0.4rem;
+    min-height: 40px;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    letter-spacing: 0.12em;
+    white-space: nowrap;
   }
 
   .hero-bottom {
@@ -3459,17 +3476,16 @@ h1, h2, h3, h4, h5, h6 {
   .container { padding: 0 var(--space-sm); }
 
   .hero-nav-bar {
-    padding: 0.3rem 0.5rem;
-  }
-
-  .hero-nav-sep {
-    display: none;
+    gap: 0.25rem;
+    padding: 0.4rem;
+    max-width: 320px;
   }
 
   .hero-nav-link {
-    font-size: 0.62rem;
-    padding: 0.55rem 0.65rem;
-    min-height: 36px;
+    font-size: 0.58rem;
+    padding: 0.55rem 0.3rem;
+    min-height: 38px;
+    letter-spacing: 0.1em;
   }
 
   .nav-logo-icon { width: 28px; height: 28px; }
