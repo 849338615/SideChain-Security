@@ -799,11 +799,21 @@
     let activeNodeIdx = null;
     let rotationTimer = null;
     const TOTAL = orbitalNodes.length;
-    const RADIUS = 290;
+    // Mobile gets a tighter orbit + smaller nodes so the whole rosette fits
+    // within narrow viewports. Matching CSS overrides shrink the rings,
+    // core, and node icons to the same scale.
+    const RADIUS_DESKTOP = 290;
+    const RADIUS_MOBILE  = 130;
+    const NODE_HALF_DESKTOP = 28; /* 56 / 2 */
+    const NODE_HALF_MOBILE  = 22; /* 44 / 2 */
+    const isMobileLayout = () => window.matchMedia('(max-width: 768px)').matches;
 
     function positionNodes() {
       const cx = orbitalContainer.offsetWidth / 2;
       const cy = orbitalContainer.offsetHeight / 2;
+      const mobile = isMobileLayout();
+      const RADIUS = mobile ? RADIUS_MOBILE : RADIUS_DESKTOP;
+      const NODE_HALF = mobile ? NODE_HALF_MOBILE : NODE_HALF_DESKTOP;
 
       orbitalNodes.forEach((node, i) => {
         const angle = ((i / TOTAL) * 360 + rotationAngle) % 360;
@@ -824,8 +834,8 @@
         
         const zIndex = Math.round(100 + 50 * Math.cos(radian));
 
-        node.style.left = (cx + x - 28) + 'px';
-        node.style.top = (cy + y - 28) + 'px';
+        node.style.left = (cx + x - NODE_HALF) + 'px';
+        node.style.top = (cy + y - NODE_HALF) + 'px';
         node.style.zIndex = node.classList.contains('active') ? 200 : zIndex;
         // Do not override active node's transform so it can be handled by CSS if needed, or set it dynamically
         if (!node.classList.contains('active') && !node.classList.contains('related')) {
@@ -896,6 +906,10 @@
 
       centerOnNode(idx);
     }
+
+    // Reposition on viewport changes — orientation flips and resize crossings
+    // of the 768px breakpoint switch the orbit between desktop/mobile radii.
+    window.addEventListener('resize', positionNodes, { passive: true });
 
     // Click handlers
     orbitalNodes.forEach((node, i) => {
