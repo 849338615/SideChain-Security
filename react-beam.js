@@ -19,27 +19,38 @@ const BeamLine = () => {
     const hLines = [];
     const vSegs = [];
 
+    // stackedLines includes both dividers per row (within-row + between-row).
+    // hLines stays as the desktop-only list (between-row only) so the
+    // desktop snake doesn't drift through invisible mid-row positions.
+    const stackedLines = [];
+
     rows.forEach((row, i) => {
       const rr = row.getBoundingClientRect();
       const yTop = rr.top - cr.top;
       const yBot = rr.bottom - cr.top;
 
-      if (i === 0) hLines.push(yTop);
-      hLines.push(yBot);
+      if (i === 0) {
+        hLines.push(yTop);
+        stackedLines.push(yTop);
+      }
 
       const content = row.querySelector('.case-content');
       if (content) {
         const ccr = content.getBoundingClientRect();
+        stackedLines.push(ccr.bottom - cr.top); // mid-row divider (mobile only)
         vSegs.push({ x: ccr.right - cr.left, yTop, yBot });
       }
+
+      hLines.push(yBot);
+      stackedLines.push(yBot);
     });
 
-    return { W, H, hLines, vSegs };
+    return { W, H, hLines, vSegs, stackedLines };
   }, []);
 
   const buildPath = useCallback((d) => {
     if (!d) return '';
-    const { W, hLines, vSegs } = d;
+    const { W, hLines, vSegs, stackedLines } = d;
     const pts = [];
 
     // Detect single-column layout: case-content takes (nearly) full width,
@@ -55,14 +66,17 @@ const BeamLine = () => {
       // Inset the beam OUTSIDE the case-rows box so it sits in the parent
       // container's padding gutter, away from the body text. SVG has
       // overflow: visible so negative-x renders into the gutter cleanly.
+      // Use stackedLines (includes within-row dividers) so the beam traces
+      // every visible horizontal line, not just the between-row borders.
       const OFFSET = 16;
       const leftX = -OFFSET;
       const rightX = W + OFFSET;
-      pts.push(`M ${leftX} ${hLines[0]}`);
-      pts.push(`L ${rightX} ${hLines[0]}`);
+      const lines = stackedLines && stackedLines.length ? stackedLines : hLines;
+      pts.push(`M ${leftX} ${lines[0]}`);
+      pts.push(`L ${rightX} ${lines[0]}`);
       let atRight = true;
-      for (let i = 1; i < hLines.length; i++) {
-        const y = hLines[i];
+      for (let i = 1; i < lines.length; i++) {
+        const y = lines[i];
         if (atRight) {
           pts.push(`L ${rightX} ${y}`); // down the right edge
           pts.push(`L ${leftX} ${y}`);  // sweep left across the divider

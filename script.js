@@ -179,19 +179,33 @@
           var OFFSET = 16;
           var leftX = -OFFSET;
           var rightX = W + OFFSET;
-          var topY0 = caseRows[0].offsetTop;
-          points.push({ x: leftX, y: topY0 });
-          points.push({ x: rightX, y: topY0 });
-          var atRight = true;
+
+          // Collect every visible horizontal divider:
+          //   1) top of row 0
+          //   2) for each row: bottom of .case-content (mid-row divider
+          //      between description and metrics)
+          //   3) for each row: bottom of the row (between-row divider)
+          var hYs = [caseRows[0].offsetTop];
           for (var s = 0; s < caseRows.length; s++) {
             var rowS = caseRows[s];
-            var bottomYS = rowS.offsetTop + rowS.offsetHeight;
+            var contentS = rowS.querySelector('.case-content');
+            if (contentS) {
+              hYs.push(contentS.offsetTop + contentS.offsetHeight);
+            }
+            hYs.push(rowS.offsetTop + rowS.offsetHeight);
+          }
+
+          points.push({ x: leftX, y: hYs[0] });
+          points.push({ x: rightX, y: hYs[0] });
+          var atRight = true;
+          for (var h = 1; h < hYs.length; h++) {
+            var y = hYs[h];
             if (atRight) {
-              points.push({ x: rightX, y: bottomYS }); // down right edge
-              points.push({ x: leftX, y: bottomYS });  // sweep left across divider
+              points.push({ x: rightX, y: y }); // down right edge
+              points.push({ x: leftX, y: y });  // sweep left across divider
             } else {
-              points.push({ x: leftX, y: bottomYS });  // down left edge
-              points.push({ x: rightX, y: bottomYS }); // sweep right across divider
+              points.push({ x: leftX, y: y });  // down left edge
+              points.push({ x: rightX, y: y }); // sweep right across divider
             }
             atRight = !atRight;
           }
