@@ -803,9 +803,9 @@
     // within narrow viewports. Matching CSS overrides shrink the rings,
     // core, and node icons to the same scale.
     const RADIUS_DESKTOP = 290;
-    const RADIUS_MOBILE  = 130;
+    const RADIUS_MOBILE  = 150;
     const NODE_HALF_DESKTOP = 28; /* 56 / 2 */
-    const NODE_HALF_MOBILE  = 22; /* 44 / 2 */
+    const NODE_HALF_MOBILE  = 24; /* 48 / 2 */
     const isMobileLayout = () => window.matchMedia('(max-width: 768px)').matches;
 
     function positionNodes() {
