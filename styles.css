@@ -3354,30 +3354,21 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
   }
 
+  /* Constrain and center the visible column directly — that's the cleanest
+     way to guarantee the card sits at viewport center, since cards inside
+     stretch to fill the column by default. */
   .marquee-col {
     height: 380px;
-    flex: 0 1 100%;
+    flex: 0 1 340px;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .marquee-col:nth-child(2),
   .marquee-col:nth-child(3),
   .marquee-col:nth-child(4) {
     display: none;
-  }
-
-  /* Center each card within the visible column. The track's default
-     align-items: stretch combined with the radial mask's 70% ellipse made
-     the card read as left-leaning — explicit centering + a sensible
-     max-width fixes both the alignment and edge-to-edge stretch. */
-  .marquee-track {
-    align-items: center;
-  }
-
-  .marquee-track .t-card {
-    width: 100%;
-    max-width: 340px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   /* Stack on mobile but keep content left-aligned — centered text inside
