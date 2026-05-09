@@ -137,8 +137,17 @@ const BeamLine = () => {
     const duration = 14000;
     let start = null;
     let rafId = 0;
+    let beamVisible = true;
+
+    const beamIO = new IntersectionObserver(([entry]) => {
+      beamVisible = entry.isIntersecting;
+      if (beamVisible && !rafId) rafId = requestAnimationFrame(tick);
+    }, { threshold: 0 });
+    const mount = glow.closest('svg')?.parentElement;
+    if (mount) beamIO.observe(mount);
 
     const tick = (ts) => {
+      if (!beamVisible) { rafId = 0; return; }
       if (!start) start = ts;
       const progress = ((ts - start) % duration) / duration;
       const offset = totalLen - progress * (totalLen + beamLen);
@@ -161,22 +170,8 @@ const BeamLine = () => {
       rafId = requestAnimationFrame(tick);
     };
 
-    const handleVisibility = () => {
-      if (document.hidden) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-        start = null;
-      } else if (!rafId) {
-        rafId = requestAnimationFrame(tick);
-      }
-    };
-
-    document.addEventListener('visibilitychange', handleVisibility);
     rafId = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(rafId);
-      document.removeEventListener('visibilitychange', handleVisibility);
-    };
+    return () => { cancelAnimationFrame(rafId); beamIO.disconnect(); };
   }, [dims]);
 
   if (!dims) return null;
