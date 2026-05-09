@@ -190,7 +190,12 @@
             var rowS = caseRows[s];
             var contentS = rowS.querySelector('.case-content');
             if (contentS) {
-              hYs.push(contentS.offsetTop + contentS.offsetHeight);
+              // .case-content's offsetParent is .case-row (because the row
+              // has position:relative). Add the row's offsetTop to get the
+              // content-bottom Y in the case-rows coordinate system —
+              // otherwise every row's content-bottom resolves to the same
+              // small Y value and the beam jumps backward upward.
+              hYs.push(rowS.offsetTop + contentS.offsetTop + contentS.offsetHeight);
             }
             hYs.push(rowS.offsetTop + rowS.offsetHeight);
           }
@@ -304,6 +309,13 @@
 
         gsap.killTweensOf(path);
 
+        // Scale duration to path length so beam pixel-speed stays consistent
+        // between desktop and mobile (mobile path is longer due to extra
+        // within-row dividers). Desktop floor stays at 6s; mobile lands
+        // around 11s for a calm, deliberate pace.
+        var SPEED = 600; // px/sec
+        var duration = Math.max(6, totalLength / SPEED);
+
         gsap.timeline({
           scrollTrigger: { trigger: caseRowsContainer, start: 'top 80%' },
           repeat: -1,
@@ -311,7 +323,7 @@
           delay: 0.8
         }).fromTo(path,
           { strokeDashoffset: beamLength },
-          { strokeDashoffset: -(totalLength + beamLength), duration: 6, ease: 'none' }
+          { strokeDashoffset: -(totalLength + beamLength), duration: duration, ease: 'none' }
         );
       }
 
